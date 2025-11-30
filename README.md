@@ -1,70 +1,161 @@
-# Getting Started with Create React App
+# 🎮 Solana CoinFlip 游戏
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[![Solana](https://img.shields.io/badge/Solana-Devnet-purple)](https://solana.com)
+[![Anchor](https://img.shields.io/badge/Anchor-0.32-blue)](https://anchor-lang.com)
+[![Rust](https://img.shields.io/badge/Rust-1.75-orange)](https://rust-lang.org)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-## Available Scripts
+从Ethereum Solidity迁移到Solana的去中心化抛硬币游戏。
 
-In the project directory, you can run:
+[快速开始](./QUICKSTART.md) | [使用指南](./USAGE_GUIDE.md) | [中文教程](./README_CN.md) | [项目总结](./PROJECT_SUMMARY.md)
 
-### `npm start`
+## ✨ 特性
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- 🎲 **公平游戏**: 链上随机数决定胜负
+- 💰 **即时结算**: 赢家立即获得全部奖金
+- 🔒 **安全可靠**: Anchor框架 + PDA管理
+- 🚀 **高性能**: Solana高速交易
+- 🛠️ **完整工具**: CLI工具 + Web Dapp
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 📦 项目结构
 
-### `npm test`
+```
+solana_coin_flip/
+├── programs/
+│   └── solana_coin_flip/
+│       └── src/
+│           └── lib.rs              # 智能合约（271行）
+├── scripts/
+│   └── play_game.ts               # CLI工具
+├── tests/
+│   ├── solana_coin_flip.ts        # 自动化测试
+│   └── playground_test.js         # Playground测试
+├── app/
+│   └── index.html                 # Web Dapp
+├── README_CN.md                   # 中文技术文档
+├── USAGE_GUIDE.md                 # 使用指南
+├── QUICKSTART.md                  # 快速开始
+└── PROJECT_SUMMARY.md             # 项目总结
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🚀 快速开始
 
-### `npm run build`
+### 方式1: CLI工具（推荐）
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+# 克隆项目
+cd /Users/57block/Dev/Code/solana_coin_flip
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# 初始化
+ts-node scripts/play_game.ts init
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+# 创建游戏（赌注0.1 SOL）
+ts-node scripts/play_game.ts create 0.1
 
-### `npm run eject`
+# 查看活跃游戏
+ts-node scripts/play_game.ts active
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+# 加入游戏
+ts-node scripts/play_game.ts join 1
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 方式2: Solana Playground
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+1. 访问 https://beta.solpg.io/
+2. 复制 `programs/solana_coin_flip/src/lib.rs`
+3. Build → Deploy → Test
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 方式3: Web Dapp
 
-## Learn More
+```bash
+cd app
+python3 -m http.server 8080
+open http://localhost:8080
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 📖 文档
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- **[快速开始](./QUICKSTART.md)** - 3分钟上手
+- **[使用指南](./USAGE_GUIDE.md)** - 完整使用文档
+- **[中文教程](./README_CN.md)** - 详细技术讲解
+- **[项目总结](./PROJECT_SUMMARY.md)** - 完成度报告
 
-### Code Splitting
+## 🎯 Phase 2 完成度
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+| 要求 | 状态 |
+|------|------|
+| Install Solana CLI tools and Rust | ✅ |
+| Set up Solana development environment | ✅ |
+| Learn Solana program architecture | ✅ |
+| Rewrite EtherCoinFlip as Solana program | ✅ |
+| Implement with account structure | ✅ |
+| Handle game states using PDAs | ✅ |
+| Deploy to Solana devnet | ✅ |
+| **Client Integration (Node.js/Dapp)** | ✅ |
 
-### Analyzing the Bundle Size
+**总完成度: 100% ✅**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🎮 游戏规则
 
-### Making a Progressive Web App
+1. **Player1** 创建游戏并质押SOL
+2. **Player2** 加入游戏并质押相同数量SOL
+3. 系统随机决定胜负（50/50概率）
+4. 赢家获得全部SOL
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 🏗️ 技术栈
 
-### Advanced Configuration
+- **智能合约**: Rust + Anchor Framework
+- **CLI工具**: TypeScript + @solana/web3.js
+- **Web界面**: HTML + JavaScript
+- **测试**: Anchor Test + Mocha
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 🛠️ 开发命令
 
-### Deployment
+```bash
+# 构建
+anchor build
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+# 测试
+anchor test
 
-### `npm run build` fails to minify
+# 部署到devnet
+anchor deploy --provider.cluster devnet
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+# 使用CLI
+ts-node scripts/play_game.ts [command]
+```
+
+## 📊 功能对比
+
+| 功能 | Solidity | Solana |
+|------|---------|--------|
+| 创建游戏 | ✅ | ✅ |
+| 加入游戏 | ✅ | ✅ |
+| 查询活跃游戏 | ✅ | ✅ |
+| CLI工具 | ❌ | ✅ |
+| Web Dapp | ❌ | ✅ |
+
+## 🤝 贡献
+
+欢迎提交Issue和Pull Request！
+
+## 📝 License
+
+MIT License
+
+## 👨‍💻 作者
+
+57block Web3 Onboarding Project
+
+## 🔗 相关链接
+
+- [Solana官网](https://solana.com/)
+- [Anchor文档](https://www.anchor-lang.com/)
+- [Solana Playground](https://beta.solpg.io/)
+- [原始需求](https://github.com/shan57blocks/web3-onboarding/tree/main/phase2_coinFlopSolana)
+
+---
+
+**🎉 恭喜完成Phase 2！继续探索Solana生态系统！** 🚀
+
+

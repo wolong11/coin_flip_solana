@@ -5,15 +5,19 @@ package_manager = "yarn"
 resolution = true
 skip-lint = false
 
-[programs.localnet]
-solana_coin_flip = "5LrczEKjr6yu96PVSjuXVX9mXaiJpqwFRqdrpxo52pAr"
+#[programs.localnet]
+#solana_coin_flip = "5LrczEKjr6yu96PVSjuXVX9mXaiJpqwFRqdrpxo52pAr"
+
+[programs.devnet]
+solana_coin_flip = "CGsUJzzm6epcN9uo2hBz523jTobiH1xYGP6yrYfu4om4"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
-wallet = "~/.config/solana/id.json"
+#cluster = "localnet"
+cluster = "devnet"
+wallet = "/Users/57block/Dev/Files/phantom-keypair.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 \"tests/**/*.ts\""

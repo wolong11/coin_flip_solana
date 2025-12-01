@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_lang::system_program;
 
-declare_id!("5LrczEKjr6yu96PVSjuXVX9mXaiJpqwFRqdrpxo52pAr");
+declare_id!("CGsUJzzm6epcN9uo2hBz523jTobiH1xYGP6yrYfu4om4");
 
 #[error_code]
 pub enum ErrorCode {

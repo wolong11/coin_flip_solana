@@ -70,9 +70,9 @@ pub struct EndCoinFlip<'info> {
     #[account(mut)]
     pub player: Signer<'info>,
     
-    /// CHECK: Winner account can be any account that will receive the prize money
+    /// CHECK: bet starter may be the winner
     #[account(mut)]
-    pub winner: UncheckedAccount<'info>,
+    pub bet_starter: UncheckedAccount<'info>,
 
     pub system_program: Program<'info, System>,
 }
@@ -170,6 +170,12 @@ pub mod coin_flip_solana {
             coin_flip.winner = coin_flip.bet_ender;
             coin_flip.loser = coin_flip.bet_starter;
         }
+        let winner_account_info = if coin_flip.winner == coin_flip.bet_starter {
+            &ctx.accounts.bet_starter.to_account_info()
+        } else {
+            &ctx.accounts.player.to_account_info()
+        };
+
 
         coin_flip.is_active = false;
 
@@ -181,7 +187,7 @@ pub mod coin_flip_solana {
         );
 
         **coin_flip_account_info.try_borrow_mut_lamports()? -= total;
-        **ctx.accounts.winner.to_account_info().try_borrow_mut_lamports()? += total;
+        **winner_account_info.try_borrow_mut_lamports()? += total;
 
         msg!(
             "Coin flip game finished, winner: {}, loser: {}, total payout: {}",

@@ -9,7 +9,7 @@ skip-lint = false
 #solana_coin_flip = "5LrczEKjr6yu96PVSjuXVX9mXaiJpqwFRqdrpxo52pAr"
 
 [programs.devnet]
-solana_coin_flip = "CGsUJzzm6epcN9uo2hBz523jTobiH1xYGP6yrYfu4om4"
+solana_coin_flip = "4VF1yPnMFUwGD4AsJkUaC7FDW1g7Fi62fMea5TEQ9KG7"
 
 [registry]
 url = "https://api.apr.dev"

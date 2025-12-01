@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_lang::system_program;
 
-declare_id!("CGsUJzzm6epcN9uo2hBz523jTobiH1xYGP6yrYfu4om4");
+declare_id!("4VF1yPnMFUwGD4AsJkUaC7FDW1g7Fi62fMea5TEQ9KG7");
 
 #[error_code]
 pub enum ErrorCode {
@@ -25,7 +25,6 @@ pub struct CoinFlip {
     pub starting_wager: u64,
     pub bet_ender: Pubkey,
     pub ending_wager: u64,
-    pub total_wager: u64,
     pub winner: Pubkey,
     pub loser: Pubkey,
     pub is_active: bool,
@@ -38,7 +37,7 @@ pub struct NewCoinFlip<'info> {
     #[account(
         init,
         payer = player,
-        space = 8 + 162,
+        space = 8 + 154,
         seeds = [
             b"coin_flip",
             player.key().as_ref(),
@@ -94,7 +93,6 @@ pub mod coin_flip_solana {
         coin_flip.starting_wager = wager;
         coin_flip.bet_ender = Pubkey::default();
         coin_flip.ending_wager = 0;
-        coin_flip.total_wager = 0;
         coin_flip.winner = Pubkey::default();
         coin_flip.loser = Pubkey::default();
         coin_flip.is_active = true;
@@ -142,7 +140,6 @@ pub mod coin_flip_solana {
 
         coin_flip.bet_ender = ctx.accounts.player.key();
         coin_flip.ending_wager = wager;
-        coin_flip.total_wager = coin_flip.starting_wager + wager;
 
         let cpi_accounts = system_program::Transfer {
             from: ctx.accounts.player.to_account_info(),
@@ -179,7 +176,7 @@ pub mod coin_flip_solana {
 
         coin_flip.is_active = false;
 
-        let total = coin_flip.total_wager;
+        let total = coin_flip.starting_wager + wager;
         let coin_flip_account_info = coin_flip.to_account_info();
         require!(
             **coin_flip_account_info.lamports.borrow() >= total,

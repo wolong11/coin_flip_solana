@@ -64,9 +64,11 @@ describe("Coin Flip Solana - Comprehensive Tests", () => {
   }
 
   /**
-   * Measure transaction performance (fees and compute units)
+   * Measure transaction performance (fees, compute units, and confirmation time)
    */
-  async function measureTransaction(signature: string, label: string): Promise<void> {
+  async function measureTransaction(signature: string, label: string, startTime?: number): Promise<void> {
+    const confirmationTime = startTime ? Date.now() - startTime : 0;
+    
     const tx = await provider.connection.getTransaction(signature, {
       commitment: "confirmed",
       maxSupportedTransactionVersion: 0
@@ -78,6 +80,7 @@ describe("Coin Flip Solana - Comprehensive Tests", () => {
         signature,
         fee: tx.meta.fee,
         computeUnitsConsumed: tx.meta.computeUnitsConsumed || 0,
+        confirmationTime, // in milliseconds
         timestamp: new Date().toISOString()
       };
       
@@ -86,6 +89,9 @@ describe("Coin Flip Solana - Comprehensive Tests", () => {
       console.log(`\n📊 Performance Metrics for: ${label}`);
       console.log(`   Transaction Fee: ${data.fee} lamports (${data.fee / LAMPORTS_PER_SOL} SOL)`);
       console.log(`   Compute Units: ${data.computeUnitsConsumed}`);
+      if (confirmationTime > 0) {
+        console.log(`   Confirmation Time: ${confirmationTime}ms`);
+      }
     }
   }
 
@@ -100,9 +106,11 @@ describe("Coin Flip Solana - Comprehensive Tests", () => {
 
     const reportPath = path.join(reportDir, "performance-report.json");
     
-    // Calculate statistics
-    const createGameMetrics = performanceData.filter(d => d.label.includes("Create Game"));
-    const endGameMetrics = performanceData.filter(d => d.label.includes("End Game"));
+    // Calculate statistics - Fixed filter to match actual labels
+    const createGameMetrics = performanceData.filter(d => 
+      d.label.includes("Create Game") || d.label.includes("Create -"));
+    const endGameMetrics = performanceData.filter(d => 
+      d.label.includes("End Game") || d.label.includes("End -"));
     
     const avgCreateFee = createGameMetrics.length > 0
       ? createGameMetrics.reduce((sum, d) => sum + d.fee, 0) / createGameMetrics.length
@@ -120,13 +128,36 @@ describe("Coin Flip Solana - Comprehensive Tests", () => {
       ? endGameMetrics.reduce((sum, d) => sum + d.computeUnitsConsumed, 0) / endGameMetrics.length
       : 0;
 
+    // Calculate average confirmation times
+    const createMetricsWithTime = createGameMetrics.filter(d => d.confirmationTime > 0);
+    const endMetricsWithTime = endGameMetrics.filter(d => d.confirmationTime > 0);
+    
+    const avgCreateConfirmTime = createMetricsWithTime.length > 0
+      ? createMetricsWithTime.reduce((sum, d) => sum + d.confirmationTime, 0) / createMetricsWithTime.length
+      : 0;
+    
+    const avgEndConfirmTime = endMetricsWithTime.length > 0
+      ? endMetricsWithTime.reduce((sum, d) => sum + d.confirmationTime, 0) / endMetricsWithTime.length
+      : 0;
+
+    const avgConfirmTime = performanceData.filter(d => d.confirmationTime > 0).length > 0
+      ? performanceData.filter(d => d.confirmationTime > 0)
+          .reduce((sum, d) => sum + d.confirmationTime, 0) / 
+        performanceData.filter(d => d.confirmationTime > 0).length
+      : 0;
+
     const report = {
       summary: {
-        totalTests: performanceData.length,
-        averageCreateGameFee: avgCreateFee,
-        averageEndGameFee: avgEndFee,
-        averageCreateGameComputeUnits: avgCreateCompute,
-        averageEndGameComputeUnits: avgEndCompute,
+        totalTransactions: performanceData.length,
+        createGameCount: createGameMetrics.length,
+        endGameCount: endGameMetrics.length,
+        averageCreateGameFee: Math.round(avgCreateFee),
+        averageEndGameFee: Math.round(avgEndFee),
+        averageCreateGameComputeUnits: Math.round(avgCreateCompute),
+        averageEndGameComputeUnits: Math.round(avgEndCompute),
+        averageCreateGameConfirmationTime: Math.round(avgCreateConfirmTime),
+        averageEndGameConfirmationTime: Math.round(avgEndConfirmTime),
+        averageConfirmationTime: Math.round(avgConfirmTime),
         totalFees: performanceData.reduce((sum, d) => sum + d.fee, 0),
         generatedAt: new Date().toISOString()
       },
@@ -138,14 +169,20 @@ describe("Coin Flip Solana - Comprehensive Tests", () => {
     console.log("\n" + "=".repeat(60));
     console.log("📊 PERFORMANCE SUMMARY");
     console.log("=".repeat(60));
-    console.log(`Total Transactions Measured: ${report.summary.totalTests}`);
-    console.log(`\nCreate Game:`);
-    console.log(`  Average Fee: ${avgCreateFee.toFixed(0)} lamports`);
-    console.log(`  Average Compute Units: ${avgCreateCompute.toFixed(0)}`);
-    console.log(`\nEnd Game:`);
-    console.log(`  Average Fee: ${avgEndFee.toFixed(0)} lamports`);
-    console.log(`  Average Compute Units: ${avgEndCompute.toFixed(0)}`);
-    console.log(`\nTotal Fees: ${report.summary.totalFees} lamports`);
+    console.log(`Total Transactions Measured: ${report.summary.totalTransactions}`);
+    console.log(`  - Create Game: ${createGameMetrics.length} txs`);
+    console.log(`  - End Game: ${endGameMetrics.length} txs`);
+    console.log(`\n💰 Transaction Fees:`);
+    console.log(`  Create Game Average: ${report.summary.averageCreateGameFee} lamports (${(report.summary.averageCreateGameFee / LAMPORTS_PER_SOL).toFixed(8)} SOL)`);
+    console.log(`  End Game Average: ${report.summary.averageEndGameFee} lamports (${(report.summary.averageEndGameFee / LAMPORTS_PER_SOL).toFixed(8)} SOL)`);
+    console.log(`\n⚡ Compute Units:`);
+    console.log(`  Create Game Average: ${report.summary.averageCreateGameComputeUnits} CU`);
+    console.log(`  End Game Average: ${report.summary.averageEndGameComputeUnits} CU`);
+    console.log(`\n⏱️  Confirmation Time:`);
+    console.log(`  Create Game Average: ${report.summary.averageCreateGameConfirmationTime}ms`);
+    console.log(`  End Game Average: ${report.summary.averageEndGameConfirmationTime}ms`);
+    console.log(`  Overall Average: ${report.summary.averageConfirmationTime}ms`);
+    console.log(`\n💵 Total Fees: ${report.summary.totalFees} lamports (${(report.summary.totalFees / LAMPORTS_PER_SOL).toFixed(8)} SOL)`);
     console.log(`\n📝 Full report saved to: ${reportPath}`);
     console.log("=".repeat(60) + "\n");
   }
@@ -193,6 +230,7 @@ describe("Coin Flip Solana - Comprehensive Tests", () => {
       const balanceBefore = await getBalance(player1.publicKey);
       console.log(`Player 1 balance before: ${balanceBefore / LAMPORTS_PER_SOL} SOL`);
 
+      const startTime = Date.now();
       const tx = await program.methods
         .newCoinFlip(new anchor.BN(nonce), new anchor.BN(wager))
         .accounts({
@@ -204,7 +242,7 @@ describe("Coin Flip Solana - Comprehensive Tests", () => {
       console.log(`✅ Game created. TX: ${tx}`);
 
       // Measure performance
-      await measureTransaction(tx, "Create Game (0.1 SOL)");
+      await measureTransaction(tx, "Create Game (0.1 SOL)", startTime);
 
       // Verify game state
       const game = await program.account.coinFlip.fetch(gamePDA);
@@ -718,6 +756,7 @@ describe("Coin Flip Solana - Comprehensive Tests", () => {
         const [gamePDA] = calculateGamePDA(player1.publicKey, nonce);
 
         // Create game
+        const startTime1 = Date.now();
         const tx1 = await program.methods
           .newCoinFlip(new anchor.BN(nonce), new anchor.BN(amount))
           .accounts({
@@ -726,9 +765,10 @@ describe("Coin Flip Solana - Comprehensive Tests", () => {
           .signers([player1])
           .rpc();
 
-        await measureTransaction(tx1, `Create - ${label}`);
+        await measureTransaction(tx1, `Create - ${label}`, startTime1);
 
         // End game
+        const startTime2 = Date.now();
         const tx2 = await program.methods
           .endCoinFlip(new anchor.BN(amount))
           .accountsPartial({
@@ -739,7 +779,7 @@ describe("Coin Flip Solana - Comprehensive Tests", () => {
           .signers([player2])
           .rpc();
 
-        await measureTransaction(tx2, `End - ${label}`);
+        await measureTransaction(tx2, `End - ${label}`, startTime2);
 
         console.log(`✅ Measured: ${label}`);
       }

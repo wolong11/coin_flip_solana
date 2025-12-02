@@ -198,7 +198,6 @@ pub mod coin_flip_solana {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
 
     // 单元测试 1：测试赌注范围验证逻辑
     #[test]
@@ -246,7 +245,6 @@ mod tests {
     // 单元测试 3：测试账户数据结构大小
     #[test]
     fn test_coin_flip_account_size() {
-        use std::mem::size_of;
         
         // CoinFlip 结构体大小应该匹配我们声明的 space
         let expected_size = 

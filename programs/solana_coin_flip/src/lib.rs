@@ -8,9 +8,6 @@ pub enum ErrorCode {
     #[msg("Game has already finished")]
     GameAlreadyFinished,
 
-    #[msg("Invalid game ID")]
-    InvalidGameId,
-
     #[msg("Ending wager must be within 1% of the starting wager")]
     WagerOutOfRange,
 
@@ -110,12 +107,12 @@ pub mod coin_flip_solana {
 
         system_program::transfer(cpi_ctx, wager)?;
 
-        msg!(
-            "New coin flip game created. starter: {}, nonce: {}, wager: {}",
-            player.key(),
-            client_nonce,
-            wager,
-        );
+        // msg!(
+        //     "New coin flip game created. starter: {}, nonce: {}, wager: {}",
+        //     player.key(),
+        //     client_nonce,
+        //     wager,
+        // );
 
         Ok(())
 
@@ -174,8 +171,6 @@ pub mod coin_flip_solana {
         };
 
 
-        coin_flip.is_active = false;
-
         let total = coin_flip.starting_wager + wager;
         let coin_flip_account_info = coin_flip.to_account_info();
         require!(
@@ -186,12 +181,14 @@ pub mod coin_flip_solana {
         **coin_flip_account_info.try_borrow_mut_lamports()? -= total;
         **winner_account_info.try_borrow_mut_lamports()? += total;
 
-        msg!(
-            "Coin flip game finished, winner: {}, loser: {}, total payout: {}",
-            coin_flip.winner,
-            coin_flip.loser,
-            total
-        );
+        coin_flip.is_active = false;
+
+        // msg!(
+        //     "Coin flip game finished, winner: {}, loser: {}, total payout: {}",
+        //     coin_flip.winner,
+        //     coin_flip.loser,
+        //     total
+        // );
 
         Ok(())
 

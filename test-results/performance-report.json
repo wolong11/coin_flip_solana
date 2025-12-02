@@ -1,27 +1,114 @@
 {
   "summary": {
-    "totalTests": 2,
+    "totalTransactions": 12,
+    "createGameCount": 6,
+    "endGameCount": 6,
     "averageCreateGameFee": 10000,
-    "averageEndGameFee": 0,
-    "averageCreateGameComputeUnits": 11850,
-    "averageEndGameComputeUnits": 0,
-    "totalFees": 20000,
-    "generatedAt": "2025-12-02T02:36:05.860Z"
+    "averageEndGameFee": 10000,
+    "averageCreateGameComputeUnits": 13465,
+    "averageEndGameComputeUnits": 11632,
+    "averageCreateGameConfirmationTime": 422,
+    "averageEndGameConfirmationTime": 421,
+    "averageConfirmationTime": 421,
+    "totalFees": 120000,
+    "generatedAt": "2025-12-02T03:18:21.557Z"
   },
   "transactions": [
     {
       "label": "Create Game (0.1 SOL)",
-      "signature": "2W5h6iBKRJeiLnjokqycJ2Vyk6nyFjS55uXfyenLmUpPC8PaDFWYcdCkkgowUHGo7d1FkmLUAgAZoJKTXiviFveG",
+      "signature": "29efMJh8MrnPKhhD6nTXyxQttvttY6CJMEruomiuTsWTxGxEzzDhS2Hdgmf9HGCQvJSZmWn7RzieAeYVqCkn2rVn",
       "fee": 10000,
-      "computeUnitsConsumed": 11850,
-      "timestamp": "2025-12-02T02:35:48.234Z"
+      "computeUnitsConsumed": 13350,
+      "confirmationTime": 319,
+      "timestamp": "2025-12-02T03:17:58.716Z"
+    },
+    {
+      "label": "End Game (0.1 SOL)",
+      "signature": "37D8z5d5pDRqv9MWUvx2Fo3NDGmdx5CBfRP1RLXBBiWb4jLV2iqej3Q9q9kyzpfzXuhCC5zjG18vc4cxCvMj4EkW",
+      "fee": 10000,
+      "computeUnitsConsumed": 11632,
+      "confirmationTime": 460,
+      "timestamp": "2025-12-02T03:18:00.084Z"
+    },
+    {
+      "label": "Create Game (1 SOL - Large)",
+      "signature": "1MJ82Fb71mKF8MHpwhGJn6ZSPm4PSWheYh2n2smpQJqSLB4wYprNNkd1zeTX1gAhbZgHHb8N7F2EYS1rDbE5G8Y",
+      "fee": 10000,
+      "computeUnitsConsumed": 13581,
+      "confirmationTime": 449,
+      "timestamp": "2025-12-02T03:18:06.134Z"
+    },
+    {
+      "label": "End Game (1 SOL - Large)",
+      "signature": "5qcHX4Hu8yBEaLaPRbGmEJ1f4GVTVe2rQY7vyDjH9YokHy4m4dsLXKGv9Vc6KBcFWzFrVUpgUzeGEZBUdhsyNN1B",
+      "fee": 10000,
+      "computeUnitsConsumed": 11637,
+      "confirmationTime": 411,
+      "timestamp": "2025-12-02T03:18:07.047Z"
+    },
+    {
+      "label": "Create - Micro (0.001 SOL)",
+      "signature": "3MRfSrzFZvQgXC1bvZ2BCDaURRcvKP1Ho3jLZZV3T1kb5QXAy8bv15mEKRdKf4WCMLvbNvpz6sqwUfZmEKxCHRAL",
+      "fee": 10000,
+      "computeUnitsConsumed": 13352,
+      "confirmationTime": 460,
+      "timestamp": "2025-12-02T03:18:14.639Z"
+    },
+    {
+      "label": "End - Micro (0.001 SOL)",
+      "signature": "vQZNYph8UHWF86KSXmjQ4VExNazzsvboVcXiaDiQEQmVbu2PUZnZNhKy1c8f1rNksfvLBzzYSgU8tZ8NcGTy7Af",
+      "fee": 10000,
+      "computeUnitsConsumed": 11625,
+      "confirmationTime": 417,
+      "timestamp": "2025-12-02T03:18:15.590Z"
+    },
+    {
+      "label": "Create - Small (0.01 SOL)",
+      "signature": "5fepi1zpbgLMGPLhxbPyuMUe5m7ZqN8XzduECoRdtis4GuSutU6KVaft8qAYQiWX4XMvJM9581jxDe7qqo9M5gUD",
+      "fee": 10000,
+      "computeUnitsConsumed": 13357,
+      "confirmationTime": 477,
+      "timestamp": "2025-12-02T03:18:16.569Z"
+    },
+    {
+      "label": "End - Small (0.01 SOL)",
+      "signature": "52ajwrvLkXNsBvPc4byngFu2RJu6W1qDHiCVtRd2XpGwanHVEGgcHQoNxLsfpQb6Pp7ZwRrt5vqtW7rsTJf4wa8n",
+      "fee": 10000,
+      "computeUnitsConsumed": 11630,
+      "confirmationTime": 406,
+      "timestamp": "2025-12-02T03:18:17.477Z"
+    },
+    {
+      "label": "Create - Medium (0.1 SOL)",
+      "signature": "4NNoExEkySJth9EKi2eC1oZZqYHVUFSStjNb8c2KNQmgobjZk1a6eyywQ4UxkptWLPpJ4Lqs7Yd2Y8r4cynYgFBW",
+      "fee": 10000,
+      "computeUnitsConsumed": 13576,
+      "confirmationTime": 429,
+      "timestamp": "2025-12-02T03:18:18.408Z"
     },
     {
       "label": "End - Medium (0.1 SOL)",
-      "signature": "5uhrSguVu5MhwhVHC9icMFBL7fmdrVpUUrRGtjnv7J2kdFbwo5gMeC6S1rsESo6aBLU5tQkpY3qxK4Q11KfgHBZw",
+      "signature": "8WVggMq1Povd96xPuNrNXhixCAjsYntSzaMNbqhzjTxrGSuZc5v2f8oSd3JKPg9t1xfh6bN4j4B373ueck8L3n5",
       "fee": 10000,
       "computeUnitsConsumed": 11632,
-      "timestamp": "2025-12-02T02:36:04.475Z"
+      "confirmationTime": 410,
+      "timestamp": "2025-12-02T03:18:19.320Z"
+    },
+    {
+      "label": "Create - Large (0.5 SOL)",
+      "signature": "2B4dRTviQ88DJwgqgPWKKDdzu5aWQscUtz9roYpv4HZZK61mr9NRSrBPELAkB47tFqjtkFbn61JhJAxm5VqpzYbg",
+      "fee": 10000,
+      "computeUnitsConsumed": 13576,
+      "confirmationTime": 397,
+      "timestamp": "2025-12-02T03:18:20.220Z"
+    },
+    {
+      "label": "End - Large (0.5 SOL)",
+      "signature": "2amjmj1X9sEH8zQtMdK28h7cQujxTWwL4UvuY7cAoHcpTvkMrovCZcr6hS4CYvQhC3Dtdh543LGcvRpP5cx3mG4X",
+      "fee": 10000,
+      "computeUnitsConsumed": 11637,
+      "confirmationTime": 422,
+      "timestamp": "2025-12-02T03:18:21.145Z"
     }
   ]
 }

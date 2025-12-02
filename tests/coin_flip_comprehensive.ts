@@ -69,10 +69,22 @@ describe("Coin Flip Solana - Comprehensive Tests", () => {
   async function measureTransaction(signature: string, label: string, startTime?: number): Promise<void> {
     const confirmationTime = startTime ? Date.now() - startTime : 0;
     
-    const tx = await provider.connection.getTransaction(signature, {
-      commitment: "confirmed",
-      maxSupportedTransactionVersion: 0
-    });
+    // Wait a bit for transaction to be fully indexed
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Retry logic for getting transaction
+    let tx = null;
+    for (let i = 0; i < 3; i++) {
+      tx = await provider.connection.getTransaction(signature, {
+        commitment: "confirmed",
+        maxSupportedTransactionVersion: 0
+      });
+      
+      if (tx && tx.meta) break;
+      
+      // Wait before retry
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
 
     if (tx && tx.meta) {
       const data = {
@@ -92,6 +104,8 @@ describe("Coin Flip Solana - Comprehensive Tests", () => {
       if (confirmationTime > 0) {
         console.log(`   Confirmation Time: ${confirmationTime}ms`);
       }
+    } else {
+      console.log(`\n⚠️  Warning: Could not fetch transaction data for ${label}`);
     }
   }
 
@@ -284,6 +298,7 @@ describe("Coin Flip Solana - Comprehensive Tests", () => {
       const p2BalanceBefore = await getBalance(player2.publicKey);
 
       // Player 2 joins and ends game
+      const startTime = Date.now();
       const tx = await program.methods
         .endCoinFlip(new anchor.BN(wager))
         .accountsPartial({
@@ -297,7 +312,7 @@ describe("Coin Flip Solana - Comprehensive Tests", () => {
       console.log(`✅ Game ended by Player 2. TX: ${tx}`);
 
       // Measure performance
-      await measureTransaction(tx, "End Game (0.1 SOL)");
+      await measureTransaction(tx, "End Game (0.1 SOL)", startTime);
 
       // Verify final game state
       const game = await program.account.coinFlip.fetch(gamePDA);
@@ -604,6 +619,7 @@ describe("Coin Flip Solana - Comprehensive Tests", () => {
       const wager = 1 * LAMPORTS_PER_SOL; // 1 SOL
       const [gamePDA] = calculateGamePDA(player1.publicKey, nonce);
 
+      const startTime1 = Date.now();
       const tx1 = await program.methods
         .newCoinFlip(new anchor.BN(nonce), new anchor.BN(wager))
         .accounts({
@@ -612,8 +628,9 @@ describe("Coin Flip Solana - Comprehensive Tests", () => {
         .signers([player1])
         .rpc();
 
-      await measureTransaction(tx1, "Create Game (1 SOL - Large)");
+      await measureTransaction(tx1, "Create Game (1 SOL - Large)", startTime1);
 
+      const startTime2 = Date.now();
       const tx2 = await program.methods
         .endCoinFlip(new anchor.BN(wager))
         .accountsPartial({
@@ -624,7 +641,7 @@ describe("Coin Flip Solana - Comprehensive Tests", () => {
         .signers([player2])
         .rpc();
 
-      await measureTransaction(tx2, "End Game (1 SOL - Large)");
+      await measureTransaction(tx2, "End Game (1 SOL - Large)", startTime2);
 
       console.log(`✅ Successfully handled 1 SOL wager`);
 

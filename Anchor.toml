@@ -15,8 +15,8 @@ solana_coin_flip = "4VF1yPnMFUwGD4AsJkUaC7FDW1g7Fi62fMea5TEQ9KG7"
 url = "https://api.apr.dev"
 
 [provider]
-#cluster = "localnet"
-cluster = "devnet"
+cluster = "localnet"
+#cluster = "devnet"
 wallet = "/Users/57block/Dev/Files/phantom-keypair.json"
 
 [scripts]

@@ -1,0 +1,27 @@
+{
+  "summary": {
+    "totalTests": 2,
+    "averageCreateGameFee": 10000,
+    "averageEndGameFee": 0,
+    "averageCreateGameComputeUnits": 11850,
+    "averageEndGameComputeUnits": 0,
+    "totalFees": 20000,
+    "generatedAt": "2025-12-02T02:36:05.860Z"
+  },
+  "transactions": [
+    {
+      "label": "Create Game (0.1 SOL)",
+      "signature": "2W5h6iBKRJeiLnjokqycJ2Vyk6nyFjS55uXfyenLmUpPC8PaDFWYcdCkkgowUHGo7d1FkmLUAgAZoJKTXiviFveG",
+      "fee": 10000,
+      "computeUnitsConsumed": 11850,
+      "timestamp": "2025-12-02T02:35:48.234Z"
+    },
+    {
+      "label": "End - Medium (0.1 SOL)",
+      "signature": "5uhrSguVu5MhwhVHC9icMFBL7fmdrVpUUrRGtjnv7J2kdFbwo5gMeC6S1rsESo6aBLU5tQkpY3qxK4Q11KfgHBZw",
+      "fee": 10000,
+      "computeUnitsConsumed": 11632,
+      "timestamp": "2025-12-02T02:36:04.475Z"
+    }
+  ]
+}

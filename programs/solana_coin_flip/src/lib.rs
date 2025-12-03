@@ -13,24 +13,32 @@ pub enum ErrorCode {
 
     #[msg("Not enough lamports of the coin flip account")]
     NotEnoughLamports,
+
+    #[msg("Player cannot be the bet starter")]
+    PlayerCannotBeTheBetStarter,
+
+    #[msg("Only the bet Starter can cancel the game")]
+    OnlyBetStarterCanCancelTheGame,
+
+    #[msg("Already has a bet ender join the game")]
+    AlreadyHasBetEnderJoin,
 }
 
 #[account]
 #[derive(InitSpace)]
 pub struct CoinFlip {
-    pub client_nonce: u64,
+    pub timestamp: u64,
     pub bet_starter: Pubkey,
     pub starting_wager: u64,
     pub bet_ender: Pubkey,
     pub ending_wager: u64,
     pub winner: Pubkey,
-    pub loser: Pubkey,
     pub is_active: bool,
     pub bump: u8,
 }
 
 #[derive(Accounts)]
-#[instruction(client_nonce: u64)]
+#[instruction(timestamp: u64)]
 pub struct NewCoinFlip<'info> {
     #[account(
         init,
@@ -39,7 +47,7 @@ pub struct NewCoinFlip<'info> {
         seeds = [
             b"coin_flip",
             player.key().as_ref(),
-            &client_nonce.to_le_bytes()
+            &timestamp.to_le_bytes()
         ],
         bump
     )]
@@ -60,9 +68,10 @@ pub struct EndCoinFlip<'info> {
         seeds = [
             b"coin_flip",
             coin_flip.bet_starter.as_ref(),
-            &coin_flip.client_nonce.to_le_bytes()
+            &coin_flip.timestamp.to_le_bytes()
         ],
-        bump = coin_flip.bump
+        bump = coin_flip.bump,
+        constraint = coin_flip.bet_starter != player.key() @ ErrorCode::PlayerCannotBeTheBetStarter,
     )]
     pub coin_flip: Account<'info, CoinFlip>,
 
@@ -76,21 +85,43 @@ pub struct EndCoinFlip<'info> {
     pub system_program: Program<'info, System>,
 }
 
+#[derive(Accounts)]
+pub struct CancelCoinFlip<'info> {
+    #[account(
+        mut,
+        seeds = [
+            b"coin_flip",
+            coin_flip.bet_starter.as_ref(),
+            &coin_flip.timestamp.to_le_bytes()
+        ],
+        bump = coin_flip.bump,
+        has_one = bet_starter @ ErrorCode::OnlyBetStarterCanCancelTheGame,
+        constraint = coin_flip.is_active @ ErrorCode::GameAlreadyFinished,
+        constraint = coin_flip.bet_ender == Pubkey::default() @ ErrorCode::AlreadyHasBetEnderJoin,
+        constraint = coin_flip.ending_wager == 0 @ ErrorCode::AlreadyHasBetEnderJoin,
+    )]
+    pub coin_flip: Account<'info, CoinFlip>,
+
+    #[account(mut)]
+    pub bet_starter: Signer<'info>,
+
+    pub system_program: Program<'info, System>,
+}
+
 #[program]
 pub mod coin_flip_solana {
     use super::*;
 
-    pub fn new_coin_flip(ctx: Context<NewCoinFlip>, client_nonce: u64, wager: u64) -> Result<()> {
+    pub fn new_coin_flip(ctx: Context<NewCoinFlip>, timestamp: u64, wager: u64) -> Result<()> {
         let coin_flip = &mut ctx.accounts.coin_flip;
         let player = &mut ctx.accounts.player;
 
-        coin_flip.client_nonce = client_nonce;
+        coin_flip.timestamp = timestamp;
         coin_flip.bet_starter = player.key();
         coin_flip.starting_wager = wager;
         coin_flip.bet_ender = Pubkey::default();
         coin_flip.ending_wager = 0;
         coin_flip.winner = Pubkey::default();
-        coin_flip.loser = Pubkey::default();
         coin_flip.is_active = true;
         coin_flip.bump = ctx.bumps.coin_flip;
 
@@ -106,7 +137,7 @@ pub mod coin_flip_solana {
         msg!(
             "New coin flip game created. starter: {}, nonce: {}, wager: {}",
             player.key(),
-            client_nonce,
+            timestamp,
             wager,
         );
 
@@ -157,10 +188,8 @@ pub mod coin_flip_solana {
 
         if random_result == 0 {
             coin_flip.winner = coin_flip.bet_starter;
-            coin_flip.loser = coin_flip.bet_ender;
         } else {
             coin_flip.winner = coin_flip.bet_ender;
-            coin_flip.loser = coin_flip.bet_starter;
         }
         let winner_account_info = if coin_flip.winner == coin_flip.bet_starter {
             &ctx.accounts.bet_starter.to_account_info()
@@ -181,12 +210,17 @@ pub mod coin_flip_solana {
         coin_flip.is_active = false;
 
         msg!(
-            "Coin flip game finished, winner: {}, loser: {}, total payout: {}",
+            "Coin flip game finished, winner: {}, total payout: {}",
             coin_flip.winner,
-            coin_flip.loser,
             total
         );
 
+        Ok(())
+    }
+
+    pub fn cancel_coin_flip(ctx: Context<CancelCoinFlip>) -> Result<()> {
+        let bet_starter = &mut ctx.accounts.coin_flip.bet_starter;
+        msg!("{} cancelled the coin flip game", bet_starter);
         Ok(())
     }
 }
@@ -247,13 +281,12 @@ mod tests {
     #[test]
     fn test_coin_flip_account_size() {
         // CoinFlip 结构体大小应该匹配我们声明的 space
-        let expected_size = 8 +  // client_nonce (u64)
+        let expected_size = 8 +  // timestamp (u64)
             32 + // bet_starter (Pubkey)
             8 +  // starting_wager (u64)
             32 + // bet_ender (Pubkey)
             8 +  // ending_wager (u64)
             32 + // winner (Pubkey)
-            32 + // loser (Pubkey)
             1 +  // is_active (bool)
             1; // bump (u8)
 

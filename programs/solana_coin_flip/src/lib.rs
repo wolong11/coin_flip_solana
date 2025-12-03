@@ -55,6 +55,8 @@ pub struct NewCoinFlip<'info> {
 pub struct EndCoinFlip<'info> {
     #[account(
         mut,
+        close = bet_starter,
+        has_one = bet_starter,
         seeds = [
             b"coin_flip",
             coin_flip.bet_starter.as_ref(),
